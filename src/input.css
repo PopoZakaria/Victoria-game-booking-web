@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input[type="text"]:focus ~ .input-text {
+  @apply text-primary_500 bg-neutral_900 transform -translate-y-9 -translate-x-4;
+}
