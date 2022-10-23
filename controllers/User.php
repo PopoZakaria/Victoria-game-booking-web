@@ -9,14 +9,27 @@ class User
         $this->_db = Database::getInstance(); // melakukan koneksi ke database
     }
 
-    public function login($username, $password)
+    public function login($username , $password)
     {
-        $data = $this->_db->get_info('admin', 'username', $username);
-        print_r($data);
-        die();
-
-        if (password_verify($password, $data['password'])) { // mengecek apakah password yang di input sama dengan password yang ada di database
-            return true; // jika sama maka akan mengembalikan nilai true
-        } else return false; // jika tidak sama maka akan mengembalikan nilai false
+      $data = $this->_db->get_info('admin','username' , $username);
+        // if ($data) {
+        //     if (password_verify($password, 'password')) {
+        //         echo "password benar";
+        //         return true;
+        //     }
+        // }
+        // die();
+      if(password_verify($password , $data['password']) )
+        {
+            echo "password benar";
+            
+        }
+        else
+        {
+            return false;
+        }
+    //   return true;
+    //   else return false;
+  
     }
 }

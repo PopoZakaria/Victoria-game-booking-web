@@ -1,30 +1,45 @@
 <?php
 require_once "../core/init.php";
 
+/* mengetes spl autoload
+mengambil file di classses Database.php
+$data = new Database(); */
+
+// pengujian session logout
+
+// untuk menampung error
 $errors = array();
 
-if (isset($_POST['submit'])) {
-    $validate = new Validation();
-    $validation = $validate->check($_POST, array(
-        'username' => array('required' => true),
-        'password' => array('required' => true)
-    ));
 
-    if ($validation->passed()) {
-        $user = new User();
-        $login = $user->login(Input::get('username'), Input::get('password'));
-        if ($login) {
-            Redirect::to('index.php');
-        } else {
-            $errors[] =  "gagal login";
-        }
+// validasi :
+// memanggil objek validasi
+$validation = new Validation();
+
+// metode check
+$validation = $validation->check(array(
+    'username' => array(
+        'required' => true,
+        'min'      => 3,
+        'max'      => 50,
+    ),
+    'password' => array(
+        'required' => true,
+        'min'      => 3,
+    )
+
+));
+if ($validation->passed()) {
+    // pengujian cek nama
+
+    if ($user->login(Input::get('username'), Input::get('password'))) {
+        // Session::set('username', Input::get('username'));
+        Redirect::to('dashboard');
     } else {
-        $errors = $validation->errors();
+        $errors[] = "Username Belum Terdaftar Silahkan Register Dahulu";
     }
+} else {
+    $errors[] = "Nama Belum Terdaftar";
 }
-
-
-
 
 ?>
 <!DOCTYPE html>
@@ -92,14 +107,7 @@ if (isset($_POST['submit'])) {
                 </a>
             </div>
         </div>
-        <?php
-        if (!empty($errors)) { ?>
-            <div id="errors">
-                <?php foreach ($errors as $error) { ?>
-                    <li><?php echo $error; ?></li>
-                <?php } ?>
-            </div>
-        <?php } ?>
+
     </form>
 </body>
 

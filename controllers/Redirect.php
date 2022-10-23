@@ -1,9 +1,9 @@
 <?php
-class Redirect{
+class Redirect
+{
 
-  public static function to($lokasi){
-    header('Location:' .$lokasi .'.php');
+  public static function to($lokasi)
+  {
+    header('Location:' . $lokasi . '.php');
   }
 }
-
- ?>

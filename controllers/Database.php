@@ -1,66 +1,95 @@
 <?php
 
+
 class Database
 {
-    // variabel untuk menyimpan koneksi
-    private static $INSTANCE = null; // static variabel digunakan untuk menyimpan nilai yang sama untuk semua objek yang dibuat dari kelas yang sama
-    private $mysqli, // variabel untuk menyimpan koneksi
-        $HOST = '10.1.1.7', // host database
-        $USER = 'root', // username database
-        $PASS = 'abogoboga', // password database
-        $DBNAME = 'tolonto'; // nama database
 
-    // membuat public constructor 
+    private static $INSTANCE = null;
+    private $mysqli,
+        $HOST = '10.1.1.7',
+        $USER = 'root',
+        $PASS = 'abogoboga',
+        $DBNAME = 'tolonto';
+
     public function __construct()
     {
-        // melakukan koneksi ke database
+
         $this->mysqli = new mysqli($this->HOST, $this->USER, $this->PASS, $this->DBNAME);
-        if (mysqli_connect_error()) // mengecek apakah terjadi error saat koneksi
-        {
-            die("gagal koneksi");  // jika terjadi error maka akan menampilkan pesan gagal koneksi
+        if (mysqli_connect_error()) {
+            die("gagal koneksi");
         }
     }
 
-    /*============================================================
-    singleton pattern ,  digunakan untuk menguji koneksi agar tidak double
-    ================================================================*/
-
-    public static function getInstance() //membuat static supaya bisa di panggil tanpa membuat object
+    /*
+  singleton pattern ,
+  agar menguji koneksi agar tidak double
+*/
+    public static function getInstance()
     {
-        if (!isset(self::$INSTANCE)) // self artinya mengambil variabel dari class itu sendiri
-        {
-            self::$INSTANCE = new Database(); // jika variabel instance belum ada maka akan membuat object baru
+        if (!isset(self::$INSTANCE)) {
+            self::$INSTANCE = new Database();
         }
-        return self::$INSTANCE; // mengembalikan instance
+        return self::$INSTANCE;
     }
 
-    public function get_info($table, $column, $value)
+
+    public function get_info($table, $column = '', $value = '')
     {
-        if (!is_int($value)) // mengecek apakah value yang di input adalah integer
-        {
-            $value = "'" . $value . "'"; // jika value bukan integer maka akan menambahkan tanda petik
+        if (!is_int($value)) {
+            $value = "'" . $value . "'";
 
-            if ($column != '') // mengecek apakah column tidak kosong
-            {
-                $query = "SELECT `username`, `password` FROM $table WHERE $column = $value"; // membuat query untuk mengecek apakah data ada di database
-                $result = $this->mysqli->query($query); // mengeksekusi query
+            if ($column != '') {
+                $query = "SELECT `username`, `password` FROM $table WHERE $column = $value";
+                $result = $this->mysqli->query($query);
 
-                while ($row = $result->fetch_assoc()) // fetch_assoc() digunakan untuk mengambil data dari database
-                {
-                    return $row; // mengembalikan nilai row
+                while ($row = $result->fetch_assoc()) {
+                    return $row;
+                }
+            } else {
+                $query = "SELECT * FROM $table";
+                $result = $this->mysqli->query($query);
+
+                while ($row = $result->fetch_assoc()) {
+                    $results[] = $row;
                 }
             }
-            // else // jika column kosong 
-            // {
-            //     $query = "SELECT * FROM $table"; // membuat query untuk mengecek apakah data ada di database
-            //     $result = $this->mysqli->query($query); // mengeksekusi query
-
-            //     while ($row = $result->fetch_assoc()) //
-            //     {
-            //         $results[] = $row; // mengembalikan nilai row
-            //     }
-            // }
-            // return $results;
+            return $results;
         }
     }
 }
+
+// class Database
+// {
+//     private $host = "localhost";
+//     private $user = "root";
+//     private $pass = "";
+//     private $db = "tolonto";
+//     protected $Database;
+//     public function __construct()
+//     {
+//         try {
+//             $this->Database = new PDO("mysql:host=$this->host;
+//              dbname=$this->db", $this->user, $this->pass);
+//             $this->Database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+//         } catch (PDOException $e) {
+//             echo "Koneksi Gagal : " . $e->getMessage();
+//         }
+//         return $this->Database;
+//     }
+//     public function getUser($table, $field, $value)
+//     {
+//         try {
+//             $sql = "SELECT * FROM $table WHERE $field = :value";
+//             $stmt = $this->Database->prepare($sql);
+//             $stmt->bindParam(':value', $value);
+//             $stmt->execute();
+//             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+//             return $result;
+//             // $userVal = $result['username'];
+//             // $passVal = $result['password'];
+//             // return $userVal . $passVal;
+//         } catch (PDOException $e) {
+//             echo "Koneksi Gagal : " . $e->getMessage();
+//         }
+//     }
+// }
